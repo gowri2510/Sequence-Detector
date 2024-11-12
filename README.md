@@ -28,7 +28,7 @@ Save and Document Results:
 
 Capture the waveforms and include the results in the final report.
 
-Verilog Code for Sequence Detector Using Moore FSM
+#Verilog Code for Sequence Detector Using Moore FSM
 
 // moore_sequence_detector.v
 module moore_sequence_detector (
@@ -41,50 +41,54 @@ module moore_sequence_detector (
         S0, S1, S2, S3, S4  // States for detecting 1011
     } state_t;
 
-    state_t current_state, next_state;
+state_t current_state, next_state;
 
-    // State transition logic
-    always @(posedge clk or posedge reset) begin
-        if (reset)
-            current_state <= S0;
-        else
-            current_state <= next_state;
-    end
+// State transition logic
+always @(posedge clk or posedge reset) begin
+    if (reset)
+        current_state <= S0;
+    else
+        current_state <= next_state;
+end
 
-    // Next state and output logic
-    always @(*) begin
-        case (current_state)
-            S0: begin
-                if (seq_in) next_state = S1;
-                else next_state = S0;
-                detected = 0;
-            end
-            S1: begin
-                if (seq_in) next_state = S1;
-                else next_state = S2;
-                detected = 0;
-            end
-            S2: begin
-                if (seq_in) next_state = S3;
-                else next_state = S0;
-                detected = 0;
-            end
-            S3: begin
-                if (seq_in) next_state = S4;
-                else next_state = S2;
-                detected = 0;
-            end
-            S4: begin
-                if (seq_in) next_state = S1;
-                else next_state = S0;
-                detected = 1;  // Sequence 1011 detected
-            end
-            default: next_state = S0;
-        endcase
-    end
+// Next state and output logic
+always @(*) begin
+    case (current_state)
+        S0: begin
+            if (seq_in) next_state = S1;
+            else next_state = S0;
+            detected = 0;
+        end
+        S1: begin
+            if (seq_in) next_state = S1;
+            else next_state = S2;
+            detected = 0;
+        end
+        S2: begin
+            if (seq_in) next_state = S3;
+            else next_state = S0;
+            detected = 0;
+        end
+        S3: begin
+            if (seq_in) next_state = S4;
+            else next_state = S2;
+            detected = 0;
+        end
+        S4: begin
+            if (seq_in) next_state = S1;
+            else next_state = S0;
+            detected = 1;  // Sequence 1011 detected
+        end
+        default: next_state = S0;
+    endcase
+end
 endmodule
 
-Verilog Code for Sequence Detector Using Mealy FSM
+#Output Sequence Detector Using Moore FSM
+![Screenshot (91)](https://github.com/user-attachments/assets/abb34013-2188-49b4-af09-2ae33f289e55)
+
+
+#Verilog Code for Sequence Detector Using Mealy FSM
 
 // mealy_sequence_detector.v
 module mealy_sequence_detector (
@@ -97,49 +101,50 @@ module mealy_sequence_detector (
         S0, S1, S2, S3  // States for detecting 1011
     } state_t;
 
-    state_t current_state, next_state;
+state_t current_state, next_state;
 
-    // State transition logic
-    always @(posedge clk or posedge reset) begin
-        if (reset)
-            current_state <= S0;
-        else
-            current_state <= next_state;
-    end
+// State transition logic
+always @(posedge clk or posedge reset) begin
+    if (reset)
+        current_state <= S0;
+    else
+        current_state <= next_state;
+end
 
-    // Next state and output logic
-    always @(*) begin
-        detected = 0;
-        case (current_state)
-            S0: begin
-                if (seq_in) next_state = S1;
-                else next_state = S0;
-            end
-            S1: begin
-                if (seq_in) next_state = S1;
-                else next_state = S2;
-            end
-            S2: begin
-                if (seq_in) next_state = S3;
-                else next_state = S0;
-            end
-            S3: begin
-                if (seq_in) begin
-                    next_state = S1;
-                    detected = 1;  // Sequence 1011 detected
-                end else
-                    next_state = S2;
-            end
-            default: next_state = S0;
-        endcase
-    end
-endmodule
+// Next state and output logic
+always @(*) begin
+    detected = 0;
+    case (current_state)
+        S0: begin
+            if (seq_in) next_state = S1;
+            else next_state = S0;
+        end
+        S1: begin
+            if (seq_in) next_state = S1;
+            else next_state = S2;
+        end
+        S2: begin
+            if (seq_in) next_state = S3;
+            else next_state = S0;
+        end
+        S3: begin
+            if (seq_in) begin
+                next_state = S1;
+                detected = 1;  // Sequence 1011 detected
+            end else
+                next_state = S2;
+        end
+        default: next_state = S0;
+    endcase
+end 
+#Output for Sequence Detector Using Mealy FSM
+![Screenshot (92)](https://github.com/user-attachments/assets/a8fa057e-792d-4f36-9bb0-38de6a7bfa31)
 
 
-Testbench for Sequence Detector (Moore and Mealy FSMs)
 
-// sequence_detector_tb.v
-`timescale 1ns / 1ps
+#Testbench for Sequence Detector (Moore and Mealy FSMs)
+
+// sequence_detector_tb.v`timescale 1ns / 1ps
 
 module sequence_detector_tb;
     // Inputs
@@ -147,55 +152,63 @@ module sequence_detector_tb;
     reg reset;
     reg seq_in;
 
-    // Outputs
-    wire moore_detected;
-    wire mealy_detected;
+// sequence_detector_tb.v `timescale 1ns / 1ps
 
-    // Instantiate the Moore FSM
-    moore_sequence_detector moore_fsm (
-        .clk(clk),
-        .reset(reset),
-        .seq_in(seq_in),
-        .detected(moore_detected)
-    );
+module sequence_detector_tb; // Inputs reg clk; reg reset; reg seq_in;
 
-    // Instantiate the Mealy FSM
-    mealy_sequence_detector mealy_fsm (
-        .clk(clk),
-        .reset(reset),
-        .seq_in(seq_in),
-        .detected(mealy_detected)
-    );
+// Outputs
+wire moore_detected;
+wire mealy_detected;
 
-    // Clock generation
-    always #5 clk = ~clk;  // Clock with 10 ns period
+// Instantiate the Moore FSM
+moore_sequence_detector moore_fsm (
+    .clk(clk),
+    .reset(reset),
+    .seq_in(seq_in),
+    .detected(moore_detected)
+);
 
-    // Test sequence
-    initial begin
-        // Initialize inputs
-        clk = 0;
-        reset = 1;
-        seq_in = 0;
+// Instantiate the Mealy FSM
+mealy_sequence_detector mealy_fsm (
+    .clk(clk),
+    .reset(reset),
+    .seq_in(seq_in),
+    .detected(mealy_detected)
+);
 
-        // Release reset after 20 ns
-        #20 reset = 0;
+// Clock generation
+always #5 clk = ~clk;  // Clock with 10 ns period
 
-        // Apply sequence: 1011
-        #10 seq_in = 1;
-        #10 seq_in = 0;
-        #10 seq_in = 1;
-        #10 seq_in = 1;
+// Test sequence
+initial begin
+    // Initialize inputs
+    clk = 0;
+    reset = 1;
+    seq_in = 0;
 
-        // Stop the simulation
-        #30 $stop;
-    end
+    // Release reset after 20 ns
+    #20 reset = 0;
 
-    // Monitor the outputs
-    initial begin
-        $monitor("Time=%0t | seq_in=%b | Moore FSM Detected=%b | Mealy FSM Detected=%b",
-                 $time, seq_in, moore_detected, mealy_detected);
-    end
-endmodule
+    // Apply sequence: 1011
+    #10 seq_in = 1;
+    #10 seq_in = 0;
+    #10 seq_in = 1;
+    #10 seq_in = 1;
+
+    // Stop the simulation
+    #30 $stop;
+end
+
+// Monitor the outputs
+initial begin
+    $monitor("Time=%0t | seq_in=%b | Moore FSM Detected=%b | Mealy FSM Detected=%b",
+             $time, seq_in, moore_detected, mealy_detected);
+end
+#Output for Sequence Detector Using Moore FSM 
+![Screenshot (93)](https://github.com/user-attachments/assets/3ec7a5ed-9256-4557-aa18-1e1f5d9926d9)
+#Output for Sequence Detector Using Mealy FSM
+![Screenshot (94)](https://github.com/user-attachments/assets/54dbcb99-6522-4ddc-9dd7-30a4d3ad60cd)
+
 
 Conclusion
 In this experiment, Moore and Mealy FSMs were successfully designed and simulated to detect the sequence 1011. Both designs worked as expected, with the main difference being that the Moore FSM generated the output based on the current state, while the Mealy FSM generated the output based on both the current state and input. The testbench verified the functionality of both FSMs, demonstrating that the Verilog HDL can effectively model both types of state machines for sequence detection tasks.
